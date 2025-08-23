@@ -2,11 +2,13 @@ name: Daily Commit 🌱
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # Once daily at midnight UTC
+  workflow_dispatch:      # ✅ Allows manual triggering
 
 jobs:
   commit:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
