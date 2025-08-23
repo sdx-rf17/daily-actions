@@ -1,27 +1,41 @@
-name: Daily Commit 🌱
+name: Greenify GitHub 🌱
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Once daily at midnight UTC
-  workflow_dispatch:      # ✅ Allows manual triggering
+    - cron: '0 0 * * *'   # 00:00 UTC
+    - cron: '4 0 * * *'   # 04:00 UTC
+    - cron: '8 0 * * *'   # 08:00 UTC
+    - cron: '12 0 * * *'  # 12:00 UTC
+    - cron: '16 0 * * *'  # 16:00 UTC
+  workflow_dispatch:      # ✅ Manual trigger enabled
 
 jobs:
-  commit:
+  daily_commit:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set Git Identity
-        run: |
-          git config user.name "sadek"
-          git config user.email "sadek7dev@gmail.com"
+    - name: Set Git identity
+      run: |
+        git config user.name "sadek"
+        git config user.email "sadek7dev@gmail.com"
 
-      - name: Update log
-        run: |
-          echo "$(date -u) – Keeping it green 🌿" >> commit_log.md
-          git add commit_log.md
-          git commit -m "Daily commit to stay green 🌱"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install jq
+      run: sudo apt-get install -y jq
+
+    - name: Append quote and commit
+      run: |
+        DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content + " — " + .author')
+
+        echo "### $DATE" >> commit_log.md
+        echo "$QUOTE" >> commit_log.md
+        echo "" >> commit_log.md
+
+        git add commit_log.md
+        git commit -m "🌿 Commit at $DATE: $QUOTE"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
