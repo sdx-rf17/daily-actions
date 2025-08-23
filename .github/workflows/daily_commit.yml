@@ -2,12 +2,12 @@ name: Super Green Daily Commits 🌿
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # Midnight UTC
-    - cron: '4 4 * * *'   # ~4 AM UTC
-    - cron: '8 8 * * *'   # ~8 AM UTC
-    - cron: '12 12 * * *' # ~12 PM UTC
-    - cron: '16 16 * * *' # ~4 PM UTC
-  workflow_dispatch:      # Allow manual trigger too
+    - cron: '0 0 * * *'     # 00:00 UTC
+    - cron: '4 4 * * *'     # 04:04 UTC
+    - cron: '8 8 * * *'     # 08:08 UTC
+    - cron: '12 12 * * *'   # 12:12 UTC
+    - cron: '16 16 * * *'   # 16:16 UTC
+  workflow_dispatch:        # Allows manual triggering
 
 jobs:
   commit_spammer:
@@ -17,8 +17,13 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Install dependencies
+    - name: Install dependencies (jq for JSON parsing)
       run: sudo apt-get install -y jq
+
+    - name: Set Git Identity (REQUIRED)
+      run: |
+        git config user.name "sdx-rf17"
+        git config user.email "sadex7rafaa@gmail.com"
 
     - name: Make 3 commits
       run: |
@@ -35,13 +40,7 @@ jobs:
           sleep 5
         done
 
-    - name: Set Git Identity
-      run: |
-        git config user.name "sadek"
-        git config user.email "sadekdev7@gmail.com"
-
-    - name: Push commits
-      run: |
-        git push
+    - name: Push commits to GitHub
+      run: git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
