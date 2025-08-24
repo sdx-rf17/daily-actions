@@ -16,6 +16,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        ref: main
+        fetch-depth: 0
 
     - name: Set Git identity
       run: |
@@ -35,7 +38,9 @@ jobs:
         echo "" >> commit_log.md
 
         git add commit_log.md
-        git commit -m "🌿 Commit at $DATE: $QUOTE"
+        git commit -m "🌿 Commit at $DATE: $QUOTE" || echo "No changes to commit"
+
+        git pull --rebase origin main
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
