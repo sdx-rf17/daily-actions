@@ -1,0 +1,46 @@
+name: Greenify GitHub 🌱
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 00:00 UTC
+    - cron: '4 0 * * *'   # 04:00 UTC
+    - cron: '8 0 * * *'   # 08:00 UTC
+    - cron: '12 0 * * *'  # 12:00 UTC
+    - cron: '16 0 * * *'  # 16:00 UTC
+  workflow_dispatch:      # ✅ Manual trigger enabled
+
+jobs:
+  daily_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: master
+        fetch-depth: 0
+
+    - name: Set Git identity
+      run: |
+        git config user.name "sadek"
+        git config user.email "sadek7dev@gmail.com"
+
+    - name: Install jq
+      run: sudo apt-get install -y jq
+
+    - name: Append quote and commit
+      run: |
+        DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content + " — " + .author')
+
+        echo "### $DATE" >> commit_log.md
+        echo "$QUOTE" >> commit_log.md
+        echo "" >> commit_log.md
+
+        git add commit_log.md
+        git commit -m "🌿 Commit at $DATE: $QUOTE" || echo "No changes to commit"
+
+        git pull --rebase origin main
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
