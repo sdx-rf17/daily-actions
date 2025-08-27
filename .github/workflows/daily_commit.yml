@@ -1,19 +1,4 @@
-name: Greenify GitHub 🌱
 
-on:
-  schedule:
-    - cron: '0 0 * * *'    # 00:00 UTC
-    - cron: '4 0 * * *'    # 04:00 UTC
-    - cron: '8 0 * * *'    # 08:00 UTC
-    - cron: '12 0 * * *'   # 12:00 UTC
-    - cron: '16 0 * * *'   # 16:00 UTC
-  workflow_dispatch:       # ✅ Manual trigger
-
-jobs:
-  daily_commit:
-    runs-on: ubuntu-latest
-
-    steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
