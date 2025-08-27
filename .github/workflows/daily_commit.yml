@@ -2,12 +2,12 @@ name: Greenify GitHub 🌱
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # 00:00 UTC
-    - cron: '4 0 * * *'   # 04:00 UTC
-    - cron: '8 0 * * *'   # 08:00 UTC
-    - cron: '12 0 * * *'  # 12:00 UTC
-    - cron: '16 0 * * *'  # 16:00 UTC
-  workflow_dispatch:      # ✅ Manual trigger enabled
+    - cron: '0 0 * * *'    # 00:00 UTC
+    - cron: '4 0 * * *'    # 04:00 UTC
+    - cron: '8 0 * * *'    # 08:00 UTC
+    - cron: '12 0 * * *'   # 12:00 UTC
+    - cron: '16 0 * * *'   # 16:00 UTC
+  workflow_dispatch:       # ✅ Manual trigger
 
 jobs:
   daily_commit:
@@ -17,7 +17,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        ref: main 
+        ref: main
         fetch-depth: 0
 
     - name: Set Git identity
@@ -28,7 +28,7 @@ jobs:
     - name: Install jq
       run: sudo apt-get install -y jq
 
-    - name: Append quote and commit
+    - name: Generate quote and commit via temp branch
       run: |
         DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
         QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content + " — " + .author')
@@ -37,10 +37,21 @@ jobs:
         echo "$QUOTE" >> commit_log.md
         echo "" >> commit_log.md
 
+        git checkout -b temp-branch
         git add commit_log.md
-        git commit -m "🌿 Commit at $DATE: $QUOTE" || echo "No changes to commit"
 
-        git pull --rebase origin main
-        git push
+        # Skip if no changes
+        git diff --quiet && echo "No changes to commit" && exit 0
+
+        git commit -m "🌿 Commit at $DATE: $QUOTE"
+
+        git checkout master
+        git pull origin master
+        git merge temp-branch --no-edit
+
+        git push origin master
+
+        # Optional cleanup (won't delete remote branch)
+        git branch -D temp-branch
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
