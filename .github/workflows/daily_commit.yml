@@ -2,12 +2,12 @@ name: Greenify GitHub 🌱
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # 00:00 UTC
-    - cron: '4 0 * * *'   # 04:00 UTC
-    - cron: '8 0 * * *'   # 08:00 UTC
-    - cron: '12 0 * * *'  # 12:00 UTC
-    - cron: '16 0 * * *'  # 16:00 UTC
-  workflow_dispatch:      # ✅ Manual trigger enabled
+    - cron: '0 0 * * *'    # 00:00 UTC
+    - cron: '4 0 * * *'    # 04:00 UTC
+    - cron: '8 0 * * *'    # 08:00 UTC
+    - cron: '12 0 * * *'   # 12:00 UTC
+    - cron: '16 0 * * *'   # 16:00 UTC
+  workflow_dispatch:       # ✅ Manual trigger
 
 jobs:
   daily_commit:
@@ -38,9 +38,15 @@ jobs:
         echo "" >> commit_log.md
 
         git add commit_log.md
-        git commit -m "🌿 Commit at $DATE: $QUOTE" || echo "No changes to commit"
 
-        git pull --rebase origin main
+        # Skip if no changes
+        git diff --quiet && echo "No changes to commit" && exit 0
+
+        git commit -m "🌿 Commit at $DATE: $QUOTE"
+
+        # Pull with conflict-safe strategy
+        git pull --strategy=recursive -X theirs origin main
+
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
