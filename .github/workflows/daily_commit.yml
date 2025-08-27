@@ -25,16 +25,12 @@ jobs:
         git config user.name "sadek"
         git config user.email "sadek7dev@gmail.com"
 
-    - name: Install jq
-      run: sudo apt-get install -y jq
-
-    - name: Generate quote and commit via temp branch
+    - name: Append timestamp and commit via temp branch
       run: |
         DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-        QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content + " — " + .author')
 
         echo "### $DATE" >> commit_log.md
-        echo "$QUOTE" >> commit_log.md
+        echo "Automated commit to keep the grid green 🌱" >> commit_log.md
         echo "" >> commit_log.md
 
         git checkout -b temp-branch
@@ -43,7 +39,7 @@ jobs:
         # Skip if no changes
         git diff --quiet && echo "No changes to commit" && exit 0
 
-        git commit -m "🌿 Commit at $DATE: $QUOTE"
+        git commit -m "🌿 Commit at $DATE"
 
         git checkout main
         git pull origin main
@@ -51,7 +47,7 @@ jobs:
 
         git push origin main
 
-        # Optional cleanup (won't delete remote branch)
+        # Cleanup temp branch
         git branch -D temp-branch
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
