@@ -1,53 +1,53 @@
-name: Greenify GitHub 🌱
+# name: Greenify GitHub 🌱
 
-on:
-  schedule:
-    - cron: '0 0 * * *'    # 00:00 UTC
-    - cron: '4 0 * * *'    # 04:00 UTC
-    - cron: '8 0 * * *'    # 08:00 UTC
-    - cron: '12 0 * * *'   # 12:00 UTC
-    - cron: '16 0 * * *'   # 16:00 UTC
-  workflow_dispatch:       # ✅ Manual trigger
+# on:
+#   schedule:
+#     - cron: '0 0 * * *'    # 00:00 UTC
+#     - cron: '4 0 * * *'    # 04:00 UTC
+#     - cron: '8 0 * * *'    # 08:00 UTC
+#     - cron: '12 0 * * *'   # 12:00 UTC
+#     - cron: '16 0 * * *'   # 16:00 UTC
+#   workflow_dispatch:       # ✅ Manual trigger
 
-jobs:
-  daily_commit:
-    runs-on: ubuntu-latest
+# jobs:
+#   daily_commit:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        ref: main
-        fetch-depth: 0
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v3
+#       with:
+#         ref: main
+#         fetch-depth: 0
 
-    - name: Set Git identity
-      run: |
-        git config user.name "sadek"
-        git config user.email "sadek7dev@gmail.com"
+#     - name: Set Git identity
+#       run: |
+#         git config user.name "sadek"
+#         git config user.email "sadek7dev@gmail.com"
 
-    - name: Append timestamp and commit via temp branch
-      run: |
-        DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+#     - name: Append timestamp and commit via temp branch
+#       run: |
+#         DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-        echo "### $DATE" >> commit_log.md
-        echo "Automated commit to keep the grid green 🌱" >> commit_log.md
-        echo "" >> commit_log.md
+#         echo "### $DATE" >> commit_log.md
+#         echo "Automated commit to keep the grid green 🌱" >> commit_log.md
+#         echo "" >> commit_log.md
 
-        git checkout -b temp-branch
-        git add commit_log.md
+#         git checkout -b temp-branch
+#         git add commit_log.md
 
-        # Skip if no changes
-        git diff --quiet && echo "No changes to commit" && exit 0
+#         # Skip if no changes
+#         git diff --quiet && echo "No changes to commit" && exit 0
 
-        git commit -m "🌿 Commit at $DATE"
+#         git commit -m "🌿 Commit at $DATE"
 
-        git checkout main
-        git pull origin main
-        git merge temp-branch --no-edit
+#         git checkout main
+#         git pull origin main
+#         git merge temp-branch --no-edit
 
-        git push origin main
+#         git push origin main
 
-        # Cleanup temp branch
-        git branch -D temp-branch
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         # Cleanup temp branch
+#         git branch -D temp-branch
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
