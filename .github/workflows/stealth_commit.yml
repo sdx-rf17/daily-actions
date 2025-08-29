@@ -2,7 +2,11 @@ name: Stealth Green Commit 🕵️
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Daily at 03:00 UTC
+    - cron: '0 0 * * *'    # 00:00 UTC
+    - cron: '4 0 * * *'    # 04:00 UTC
+    - cron: '8 0 * * *'    # 08:00 UTC
+    - cron: '12 0 * * *'   # 12:00 UTC
+    - cron: '16 0 * * *'   # 16:00 UTC
   workflow_dispatch:      # Allow manual testing
 
 jobs:
