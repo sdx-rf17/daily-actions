@@ -25,7 +25,7 @@ jobs:
       - name: Stealth update and commit
         run: |
           git pull --rebase origin main
-          echo "Last touched on $(date -u)" > .keep_alive
+          echo "Last touched on $(date -u)" >> .keep_alive
           git add .keep_alive
           git commit -m "🕵️ Stealth commit to keep activity alive" || echo "Nothing to commit"
           git push
